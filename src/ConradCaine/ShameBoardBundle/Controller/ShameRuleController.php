@@ -53,8 +53,20 @@ class ShameRuleController extends Controller
             $formData = $form->getData();
             $em->persist($formData);
             $em->flush();
+
+            $response = new Request(json_encode([
+                'success' => true
+            ]));
+            $response->headers->set('Content-Type', 'application/json');
+            return $response;
+
         }
 
-        //TODO return json response
+        $response = new Request(json_encode([
+            'success' => false
+        ]));
+        $response->headers->set('Content-Type', 'application/json');
+        return $response;
+
     }
 } 

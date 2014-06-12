@@ -21,7 +21,7 @@ use ConradCaine\ShameBoardBundle\Form\ShameType;
 class ShameController extends Controller
 {
     /**
-     * @Route("", name="all_shames")
+     * @Route("/", name="all_shames")
      * @Method("GET")
      * @return JsonResponse
      */
@@ -29,29 +29,30 @@ class ShameController extends Controller
     {
         $shameRepository= $this->getDoctrine()->getRepository('ConradCaineShameBoardBundle:Shame');
         $allShames = $shameRepository->findAll();
+        $shamesArray = [];
 
         foreach ($allShames as $shame) {
-            $shamesArray[] = array(
+            $shamesArray[] = [
                 'id'            => $shame->getId(),
                 'description'   => $shame->getDescription(),
                 'extraPoints'   => $shame->getExtraPoints(),
                 'shameDesc' => $shame->getShameRule()->getDescription(),
-                'user'          => array(
+                'user'          => [
                     'username'      => $shame->getUser()->getUsername(),
                     'email'         => $shame->getUser()->getEmail(),
                     'userId'        => $shame->getUser()->getId(),
                     'gravatarPhoto' => "http://www.gravatar.com/avatar/".md5($shame->getUser()->getEmail())."?s=40&r=g&d=http%3A%2F%2Fimageshack.com%2Fa%2Fimg835%2F4017%2Fndp4.png"
-                ),
-                'date'          => array(
+                ],
+                'date'          => [
                     'date'          => $shame->getDate()->format(\ DateTime::ISO8601),
                     'timezone'      => $shame->getDate()->getTimezone(),
-                ),
-            );
+                ],
+            ];
         }
 
         $shamesData = array('shames' => $shamesArray);
 
-        return new JsonResponse($shamesArray, 200, array('Content-Type' => 'application/json'));
+        return new JsonResponse($shamesData, 200, array('Content-Type' => 'application/json'));
     }
 
     /**
@@ -96,8 +97,6 @@ class ShameController extends Controller
 
         $form = $this->createForm(new ShameType(), $shame);
         $form->handleRequest($request);
-
-        var_dump($form->getData());die;
 
         if ($form->isValid()) {
             try {
